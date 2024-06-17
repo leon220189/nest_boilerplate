@@ -1,0 +1,23 @@
+# Use the official Node.js image as the base image
+FROM node:18-alpine
+
+# Install pnpm globally
+RUN npm install -g pnpm
+
+# Create and change to the app directory
+WORKDIR /usr/src/app
+
+# Copy the package.json and pnpm-lock.yaml files
+COPY package.json pnpm-lock.yaml ./
+
+# Install app dependencies using pnpm
+RUN pnpm install
+
+# Copy the rest of the app source code
+COPY . .
+
+# Expose the port the app runs on
+EXPOSE 3001
+
+# Command to run the app in development mode with nest start --watch
+CMD ["pnpm", "run", "start:dev"]
