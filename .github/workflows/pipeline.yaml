@@ -26,15 +26,15 @@ jobs:
 
       - name: Build and test
         run: |
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/nest_boilerplate:${{ github.sha }} .
-          docker run ${{ secrets.DOCKERHUB_USERNAME }}/nest_boilerplate:${{ github.sha }} yarn test
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
+          docker run ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} yarn test
 
       - name: Push image to Docker Hub
         uses: docker/build-push-action@v2
         with:
           context: .
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/nest_boilerplate:${{ github.sha }}
+          tags: ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
 
   deploy:
     needs: build-and-test
