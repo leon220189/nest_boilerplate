@@ -12,7 +12,7 @@ const config: TypeOrmModuleOptions = {
 	synchronize: true, // Disable automatic schema synchronization
 	migrationsRun: true,
 	logging: false,
-	migrationsTableName: 'migration',
+	migrationsTableName: 'migrations',
 };
 
 export default config;

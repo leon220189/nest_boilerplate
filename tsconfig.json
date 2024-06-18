@@ -20,12 +20,17 @@
     "esModuleInterop": true,
     "moduleResolution": "node",
   },
-  "exclude": ["node_modules", "dist", "migrations"],
   "include": [
     "src/**/*",
     "config/**/*",
     "orm/**/*",
-    "libs/**/*"],
+    "libs/**/*",
+    "migrations/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ],
   "watchOptions": {
     "watchFile": "dynamicPriorityPolling",
     "watchDirectory": "dynamicPriorityPolling",

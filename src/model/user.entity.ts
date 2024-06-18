@@ -81,7 +81,7 @@ export class UserEntity extends AbstractEntity {
 	// providerId: string;
 
 	@OneToOne(() => UserProfileEntity, (_userProfile) => _userProfile.id)
-	@JoinColumn({ name: 'profile' })
+	@JoinColumn({ name: 'profile_id' })
 	profile: UserProfileEntity;
 
 	constructor(partial: Partial<UserEntity>) {

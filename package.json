@@ -30,7 +30,8 @@
 		"schema:sync": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:sync",
 		"typeorm:cache:clear": "ts-node -r tsconfig-paths/register src/cli.ts typeorm cache:clear",
 		"typeorm:query": "ts-node -r tsconfig-paths/register src/cli.ts typeorm query",
-		"typeorm:version": "ts-node -r tsconfig-paths/register src/cli.ts typeorm version"
+		"typeorm:version": "ts-node -r tsconfig-paths/register src/cli.ts typeorm version",
+		"migration:prod:run": "ts-node -r tsconfig-paths/register dist/src/cli.js typeorm migration:run"
 	},
 	"dependencies": {
 		"@nestjs-modules/mailer": "^2.0.2",

@@ -46,7 +46,8 @@ jobs:
 
       - name: Start Docker and Run App
         run: |
-          docker-compose up -d
+          chmod +x ./dev.sh
+          ./dev.sh up docker-compose.prod.yml
 
       - name: Expose with ngrok
         run: |

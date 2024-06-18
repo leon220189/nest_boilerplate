@@ -10,9 +10,9 @@ const config: TypeOrmModuleOptions = {
 	entities: ['dist/**/*.entity.{ts,js}'],
 	migrations: ['dist/migrations/*.{ts,js}', 'src/migrations/*.{ts,js}'],
 	synchronize: false, // Disable automatic schema synchronization
-	migrationsRun: false,
+	migrationsRun: true,
 	logging: false,
-	migrationsTableName: 'migration',
+	migrationsTableName: 'migrations',
 };
 
 export default config;

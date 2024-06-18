@@ -3,22 +3,22 @@ FROM node:18-alpine as deps
 WORKDIR /app
 # Install pnpm
 RUN npm install -g pnpm
+# Verify pnpm installation
+RUN which pnpm
 # Copy package files
 COPY package.json pnpm-lock.yaml ./
 # Install dependencies using pnpm
-RUN pnpm install
+RUN pnpm install --frozen-lockfile
 
 # Use the same Node.js image for the builder stage
 FROM node:18-alpine as builder
 WORKDIR /app
-# Install pnpm
-RUN npm install -g pnpm
 # Copy the entire project
 COPY . .
 # Use previously installed dependencies
 COPY --from=deps /app/node_modules ./node_modules
 # Build the application
-RUN pnpm run build && pnpm install --prod --frozen-lockfile
+RUN npm run build
 
 # Setup the runtime container
 FROM node:18-alpine as runner
@@ -29,9 +29,8 @@ RUN addgroup -g 1001 appgroup && adduser -D -u 1001 appuser -G appgroup
 RUN chown -R appuser:appgroup /app
 USER appuser
 # Copy necessary files from the builder stage
-COPY --from=builder --chown=appuser:appgroup /app/package.json ./
-COPY --from=builder --chown=appuser:appgroup /app/tsconfig.json ./
-COPY --from=builder --chown=appuser:appgroup /app/dist ./dist
-COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
+COPY --from=builder /app/dist ./dist
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json /app/tsconfig.json ./
 # Define the command to run the application
 CMD ["npm", "run", "start:prod"]
