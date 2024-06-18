@@ -27,6 +27,8 @@ jobs:
       - name: Build and test
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
+          # Assuming you have a command to test the application inside Docker (but have issue here)
+          # docker run --rm ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} npm run test
 
       - name: Push image to Docker Hub
         uses: docker/build-push-action@v2
@@ -56,6 +58,16 @@ jobs:
 
       - name: Expose with ngrok
         run: |
+          sleep 10  # Wait for containers to fully start
           CONTAINER_ID=$(docker ps -qf "name=test-server")
-          PORT=$(docker port $CONTAINER_ID 8888/tcp | cut -d ':' -f2)
+          if [ -z "$CONTAINER_ID" ]; then
+            echo "Container not found, exiting..."
+            exit 1
+          fi
+          PORT_MAPPING=$(docker port $CONTAINER_ID 8888/tcp)
+          PORT=$(echo $PORT_MAPPING | cut -d ':' -f2)
+          if [ -z "$PORT" ]; then
+            echo "Port not found, exiting..."
+            exit 1
+          fi
           ./ngrok http $PORT --region=us
