@@ -4,7 +4,7 @@
 	"sourceRoot": "src",
 	"compilerOptions": {
 	  "deleteOutDir": true,
-	  "assets": [{ "include": "mail/templates/**/*", "outDir": "dist/src" }],
+	  "assets": [{ "include": "mail/templates/**/*", "outDir": "dist/src" }, { "include": "**/*.spec.ts", "outDir": "dist" }],
 	  "watchAssets": true
 	}
   }
