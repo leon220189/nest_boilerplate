@@ -38,10 +38,16 @@ jobs:
   deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master' # Ensures that deploys happen only on main branch
+    if: github.ref == 'refs/heads/master'
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
+      - name: Install ngrok
+        run: |
+          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
+          unzip ngrok-stable-linux-amd64.zip
+          ./ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
 
       - name: Start Docker and Run App
         run: |
@@ -50,4 +56,6 @@ jobs:
 
       - name: Expose with ngrok
         run: |
-          ngrok http $(docker port ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}) --region=us --authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+          CONTAINER_ID=$(docker ps -qf "name=test-server")
+          PORT=$(docker port $CONTAINER_ID 8888/tcp | cut -d ':' -f2)
+          ./ngrok http $PORT --region=us
