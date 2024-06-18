@@ -11,6 +11,8 @@ RUN pnpm install
 # Use the same Node.js image for the builder stage
 FROM node:18-alpine as builder
 WORKDIR /app
+# Install pnpm
+RUN npm install -g pnpm
 # Copy the entire project
 COPY . .
 # Use previously installed dependencies
