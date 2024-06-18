@@ -31,6 +31,6 @@ USER appuser
 # Copy necessary files from the builder stage
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package.json /app/tsconfig.json ./
+COPY --from=builder /app/package.json /app/tsconfig.json /app/jest.config.js ./
 # Define the command to run the application
 CMD ["npm", "run", "start:prod"]
