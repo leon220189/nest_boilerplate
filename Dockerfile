@@ -6,7 +6,7 @@ RUN npm install -g pnpm
 # Verify pnpm installation
 RUN which pnpm
 # Copy package files
-COPY package.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml jest.config.js ./
 # Install dependencies using pnpm
 RUN pnpm install --frozen-lockfile
 
