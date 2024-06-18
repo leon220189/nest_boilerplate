@@ -1,6 +1,6 @@
 FROM node:18-alpine as deps
 WORKDIR /app
-COPY package.json package-lock.json pnpm-lock.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN npm install
 
 FROM node:18-alpine as builder
