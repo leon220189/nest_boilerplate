@@ -78,19 +78,19 @@ Copy and paste the below:
 
 ```json
 {
-  "scripts": {
-    "migration:create": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:create",
-    "migration:generate": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:generate",
-    "migration:run": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:run",
-    "migration:revert": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:revert",
-    "migration:show": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:show",
-    "schema:drop": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:drop",
-    "schema:log": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:log",
-    "schema:sync": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:sync",
-    "typeorm:cache:clear": "ts-node -r tsconfig-paths/register src/cli.ts typeorm cache:clear",
-    "typeorm:query": "ts-node -r tsconfig-paths/register src/cli.ts typeorm query",
-    "typeorm:version": "ts-node -r tsconfig-paths/register src/cli.ts typeorm version"
-  }
+	"scripts": {
+		"migration:create": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:create",
+		"migration:generate": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:generate",
+		"migration:run": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:run",
+		"migration:revert": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:revert",
+		"migration:show": "ts-node -r tsconfig-paths/register src/cli.ts typeorm migration:show",
+		"schema:drop": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:drop",
+		"schema:log": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:log",
+		"schema:sync": "ts-node -r tsconfig-paths/register src/cli.ts typeorm schema:sync",
+		"typeorm:cache:clear": "ts-node -r tsconfig-paths/register src/cli.ts typeorm cache:clear",
+		"typeorm:query": "ts-node -r tsconfig-paths/register src/cli.ts typeorm query",
+		"typeorm:version": "ts-node -r tsconfig-paths/register src/cli.ts typeorm version"
+	}
 }
 ```
 

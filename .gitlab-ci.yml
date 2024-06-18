@@ -1,0 +1,88 @@
+image: docker/compose:alpine-1.27.4
+
+services:
+  - docker:dind
+
+# cache khai báo ở top-level nên sẽ áp dụng cho tất cả các job trong tất cả stages
+cache:
+  key: ${CI_COMMIT_REF_SLUG} # cache này chỉ áp dụng cho branch hiện tại
+  paths:
+    - node_modules/
+
+stages:
+  - build
+  - test
+  - release
+
+before_script:
+  - docker version
+  - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+
+build:
+  stage: build
+  script:
+    #### normal version
+    # - docker pull $CI_REGISTRY_IMAGE:latest || true
+    # - docker build --cache-from $CI_REGISTRY_IMAGE:latest --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA .
+    # - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    #### optimize use --cache-from
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME || true
+    - >
+      docker build
+      --cache-from $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+      --tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+      .
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    # Tag thêm 1 image với tag là branch hiện tại để làm cache cho các lần build sau ($CI_COMMIT_REF_NAME = branch hiện tại)
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+.tests:
+  stage: test
+  before_script:
+    - docker-compose version
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+
+linting:
+  extends: .tests
+  script:
+    - docker-compose -f docker-compose.ci.yml up -d
+    - sleep 15
+    - docker ps #check docker container running before excute
+    - docker-compose exec -T app npm run lint
+
+jest:
+  extends: .tests
+  script:
+    - docker-compose -f docker-compose.ci.yml up -d
+    - sleep 15
+    - docker ps #check docker container running before excute
+    - docker-compose exec -T app npm run test
+  coverage: /All files[^|]*\|[^|]*\s+([\d\.]+)/
+  artifacts:
+    paths:
+      - coverage/
+
+release-tag:
+  variables:
+    GIT_STRATEGY: none
+  stage: release
+  except:
+    - master
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+    - docker push $CI_REGISTRY_IMAGE:$CI_COMMIT_REF_NAME
+
+release-latest:
+  variables:
+    GIT_STRATEGY: none
+  stage: release
+  only:
+    - master
+  script:
+    - docker pull $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA
+    - docker tag $CI_REGISTRY_IMAGE:$CI_COMMIT_SHA $CI_REGISTRY_IMAGE:latest
+    - docker push $CI_REGISTRY_IMAGE:latest
