@@ -27,6 +27,7 @@ jobs:
       - name: Build and test
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
+          docker run ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} ls -al
           docker run ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} npm run test
 
       - name: Push image to Docker Hub
