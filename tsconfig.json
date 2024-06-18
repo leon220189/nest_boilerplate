@@ -25,7 +25,8 @@
     "config/**/*",
     "orm/**/*",
     "libs/**/*",
-    "migrations/**/*"
+    "migrations/**/*",
+    "test/**/*",
   ],
   "exclude": [
     "node_modules",
