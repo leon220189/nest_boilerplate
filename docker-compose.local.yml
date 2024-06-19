@@ -1,77 +1,57 @@
-name: CI/CD Pipeline testing
+version: '3.8'
+services:
+  test-postgres:
+    container_name: test-postgres
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    image: test/postgres-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-test}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test}
+      POSTGRES_DB: ${POSTGRES_DB_NAME:-test_db}
+    ports:
+      - '${POSTGRES_PORT:-5432}:5432'
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    networks:
+      - db-network
 
-on:
-  push:
-    branches:
-      - master
-  pull_request:
-    branches:
-      - master
+  test-server:
+    container_name: test-server
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    command: pnpm run start:dev
+    image: test/server-app:dev-v1
+    networks:
+      - db-network
+      - cache-network
+    env_file: .env
+    ports:
+      - '${APP_PORT}:${PORT}' # expose-to-the-world : only-in-the-docker
+    depends_on:
+      - test-postgres
+      - test-redis
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
 
-jobs:
-  build-and-test:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+  test-redis:
+    image: redis:7.2.4-alpine
+    volumes:
+      - .docker/data/redis:/data
+    command: redis-server --requirepass ${REDIS_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - cache-network
 
-      - name: Set up Docker
-        uses: docker/setup-buildx-action@v1
+networks:
+  cache-network:
+    driver: bridge
+  db-network:
+    driver: bridge
 
-      - name: Login to DockerHub
-        uses: docker/login-action@v1
-        with:
-          username: ${{ secrets.DOCKER_USERNAME }}
-          password: ${{ secrets.DOCKER_PASSWORD }}
-
-      - name: Build and test
-        run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
-          # docker run --rm ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} npm run test
-
-      - name: Push image to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
-
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install ngrok
-        run: |
-          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
-          unzip ngrok-stable-linux-amd64.zip
-          ./ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-      - name: Start Docker and Run App
-        run: |
-          chmod +x ./dev.sh
-          ./dev.sh up docker-compose.prod.yml
-          sleep 30 # Increase sleep time
-
-      - name: Check Docker Container
-        run: |
-          docker ps
-          docker logs test-server
-
-      - name: Expose with ngrok
-        run: |
-          CONTAINER_ID=$(docker ps -qf "name=test-server")
-          if [ -z "$CONTAINER_ID" ]; then
-            echo "Container not found, exiting..."
-            exit 1
-          fi
-          PORT_MAPPING=$(docker port $CONTAINER_ID 8888/tcp)
-          PORT=$(echo $PORT_MAPPING | cut -d ':' -f2)
-          if [ -z "$PORT" ]; then
-            echo "Port not found, exiting..."
-            exit 1
-          fi
-          ./ngrok http $PORT --region=us
+volumes:
+  pgdata:

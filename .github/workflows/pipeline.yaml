@@ -54,17 +54,12 @@ jobs:
           cat << EOF > .env
           APP_PORT=8888
           PORT=8888
-          REDIS_PASSWORD=your_redis_password
-          POSTGRES_USER=test
-          POSTGRES_PASSWORD=test
-          POSTGRES_DB=test_db
-          POSTGRES_PORT=5432
           EOF
 
       - name: Start Docker and Run App
         run: |
           chmod +x ./dev.sh
-          ./dev.sh up docker-compose.prod.yml
+          ./dev.sh up docker-compose.local.yml
           sleep 30  # Wait for containers to fully start
           docker ps
 
