@@ -47,21 +47,12 @@ jobs:
         run: |
           wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
           unzip ngrok-stable-linux-amd64.zip
-          ./ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-
-      - name: Create env file
-        run: |
-          cat << EOF > .env
-          APP_PORT=8888
-          PORT=8888
-          EOF
 
       - name: Start Docker and Run App
         run: |
           chmod +x ./dev.sh
-          ./dev.sh up docker-compose.local.yml
-          sleep 30  # Wait for containers to fully start
-          docker ps
+          ./dev.sh up docker-compose.prod.yml
+          sleep 10  # Wait for containers to fully start
 
       - name: Expose with ngrok
         run: |
@@ -70,8 +61,10 @@ jobs:
             echo "Container not found, exiting..."
             exit 1
           fi
-          PORT_MAPPING=$(docker port $CONTAINER_ID 8888/tcp)
-          PORT=$(echo $PORT_MAPPING | cut -d ':' -f2)
+          PORT_MAPPING=$(docker port $CONTAINER_ID)
+          echo "Port Mapping: $PORT_MAPPING"
+          PORT=$(echo $PORT_MAPPING | awk -F: '{print $NF}')
+          echo "Port extracted: $PORT"
           if [ -z "$PORT" ]; then
             echo "Port not found, exiting..."
             exit 1
