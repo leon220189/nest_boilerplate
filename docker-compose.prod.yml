@@ -31,9 +31,9 @@ services:
     env_file: .env
     ports:
       - '${APP_PORT-8888}:${PORT-8888}' # expose-to-the-world : only-in-the-docker
-    depends_on:
-      - test-postgres
-      - test-redis
+    # depends_on:
+    #   - test-postgres
+    #   - test-redis
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
