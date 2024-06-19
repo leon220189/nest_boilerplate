@@ -58,7 +58,7 @@ jobs:
           POSTGRES_USER=test
           POSTGRES_PASSWORD=test
           POSTGRES_DB=test_db
-          POSTGRES_PORT=test_db
+          POSTGRES_PORT=5432
           EOF
 
       - name: Start Docker and Run App
