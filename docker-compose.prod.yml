@@ -28,7 +28,7 @@ services:
     # networks:
     #   - db-network
     #   - cache-network
-    env_file: .env
+    # env_file: .env
     ports:
       - '${APP_PORT-8888}:${PORT-8888}' # expose-to-the-world : only-in-the-docker
     # depends_on:
