@@ -1,57 +1,52 @@
+# version: '3.8'
+# services:
+#   test-server:
+#     container_name: test-server
+#     build:
+#       context: .
+#       dockerfile: Dockerfile
+#     command: npm run start:prod
+#     image: test/server-app:prod-v1
+#     environment:
+#       NODE_ENV: ${NODE_ENV:-prod}
+#       DATABASE_USERNAME: ${DATABASE_USERNAME:-test}
+#       DATABASE_PASSWORD: ${DATABASE_PASSWORD:-test}
+#       DATABASE_HOST: ${DATABASE_HOST:-test-postgres}
+#       DATABASE_PORT: ${DATABASE_PORT:-5432}
+#       DATABASE_NAME: ${DATABASE_NAME:-test_db}
+#       JWT_SECRET_KEY: ${JWT_SECRET_KEY:-binhle}
+#       ACCESS_TOKEN_EXPIRE_TIME: ${ACCESS_TOKEN_EXPIRE_TIME:-3600s}
+#       REFRESH_TOKEN_EXPIRE_TIME: ${REFRESH_TOKEN_EXPIRE_TIME:-86400s}
+#       COOKIE_SECRET_KEY: ${COOKIE_SECRET_KEY:-binhle@123-COOKIE}
+#       ACCESS_COOKIE_EXPIRE_TIME: ${ACCESS_COOKIE_EXPIRE_TIME:-900000}
+#       REFRESH_COOKIE_EXPIRE_TIME: ${REFRESH_COOKIE_EXPIRE_TIME:-604800000}
+#       SESSION_SECRET_KEY: ${SESSION_SECRET_KEY:-binhle@123-SESSION}
+#       CSRF_TOKEN_HEADER: ${CSRF_TOKEN_HEADER:-__Host-blank.X-CSRF-Token}
+#     ports:
+#       - '${APP_PORT-8888}:${PORT-8888}' # expose-to-the-world : only-in-the-docker
+#     volumes:
+#       - .:/usr/src/app
+#       - /usr/src/app/node_modules
+
+# volumes:
+#   pgdata:
+
+
 version: '3.8'
 services:
-  # test-postgres:
-  #   container_name: test-postgres
-  #   build:
-  #     context: ./postgres
-  #     dockerfile: Dockerfile
-  #   image: test/postgres-db
-  #   environment:
-  #     POSTGRES_USER: ${POSTGRES_USER:-test}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-test}
-  #     POSTGRES_DB: ${POSTGRES_DB_NAME:-test_db}
-  #   ports:
-  #     - '${POSTGRES_PORT:-5432}:5432'
-  #   volumes:
-  #     - pgdata:/var/lib/postgresql/data
-  #   restart: unless-stopped
-  #   networks:
-  #     - db-network
-
   test-server:
     container_name: test-server
     build:
       context: .
-      dockerfile: Dockerfile
-    command: npm run start:prod
-    image: test/server-app:prod-v1
-    # networks:
-    #   - db-network
-    #   - cache-network
-    # env_file: .env
+      dockerfile: Dockerfile.dev
+    command: pnpm run start:dev
+    image: test/server-app:dev-v1
+    env_file: .env
     ports:
-      - '${APP_PORT-8888}:${PORT-8888}' # expose-to-the-world : only-in-the-docker
-    # depends_on:
-    #   - test-postgres
-    #   - test-redis
+      - '${APP_PORT}:${PORT}' # expose-to-the-world : only-in-the-docker
     volumes:
       - .:/usr/src/app
       - /usr/src/app/node_modules
-
-  # test-redis:
-  #   image: redis:7.2.4-alpine
-  #   volumes:
-  #     - .docker/data/redis:/data
-  #   command: redis-server --requirepass ${REDIS_PASSWORD-redispass}
-  #   restart: unless-stopped
-  #   networks:
-  #     - cache-network
-
-# networks:
-#   cache-network:
-#     driver: bridge
-#   db-network:
-#     driver: bridge
 
 volumes:
   pgdata:
