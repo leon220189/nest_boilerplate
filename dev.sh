@@ -8,13 +8,13 @@ function nodeContainer {
 }
 
 function up {
-    docker compose -f "${1:-docker-compose.yml}" up -d
-    echo "App starting with ${1:-docker-compose.yml}"
+    docker compose -f $1 up -d
+    echo "App starting with $1"
 }
 
 function down {
-    docker compose -f "${1:-docker-compose.yml}" down
-    echo "App down"
+    docker compose -f $1 down
+    echo "App down with $1"
 }
 
 if [[ $# == 0 ]]; then
@@ -25,21 +25,17 @@ fi
 while [[ $# -gt 0 ]]; do
     case "${1}" in
         up)
-            shift
-            up "${1}"
+            up $2
             exit $?
         ;;
         down)
-            shift
-            down "${1}"
+            down $2
             exit 0
         ;;
         *)
             echo "Unknown parameter: ${1}"
-            # printHelp
             exit 1
         ;;
     esac
-
     shift
 done
