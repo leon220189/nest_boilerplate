@@ -36,7 +36,6 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
 
   deploy:
-    deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
