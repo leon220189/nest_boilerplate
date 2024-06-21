@@ -30,7 +30,7 @@ services:
       - cache-network
     env_file: .env
     ports:
-      - '${APP_PORT}:${PORT}' # expose-to-the-world : only-in-the-docker
+      - '${APP_PORT:-8888}:${PORT:-8888}' # expose-to-the-world : only-in-the-docker
     depends_on:
       - test-postgres
       - test-redis
@@ -42,7 +42,7 @@ services:
     image: redis:7.2.4-alpine
     volumes:
       - .docker/data/redis:/data
-    command: redis-server --requirepass ${REDIS_PASSWORD}
+    command: redis-server --requirepass ${REDIS_PASSWORD:-redispass}
     restart: unless-stopped
     networks:
       - cache-network
