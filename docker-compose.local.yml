@@ -28,7 +28,22 @@ services:
     networks:
       - db-network
       - cache-network
-    env_file: .env
+    # env_file: .env
+    environment:
+      NODE_ENV: ${NODE_ENV:-local}
+      DATABASE_USERNAME: ${DATABASE_USERNAME:-test}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD:-test}
+      DATABASE_HOST: ${DATABASE_HOST:-test-postgres}
+      DATABASE_PORT: ${DATABASE_PORT:-5432}
+      DATABASE_NAME: ${DATABASE_NAME:-test_db}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-binhle}
+      ACCESS_TOKEN_EXPIRE_TIME: ${ACCESS_TOKEN_EXPIRE_TIME:-3600s}
+      REFRESH_TOKEN_EXPIRE_TIME: ${REFRESH_TOKEN_EXPIRE_TIME:-86400s}
+      COOKIE_SECRET_KEY: ${COOKIE_SECRET_KEY:-binhle@123-COOKIE}
+      ACCESS_COOKIE_EXPIRE_TIME: ${ACCESS_COOKIE_EXPIRE_TIME:-900000}
+      REFRESH_COOKIE_EXPIRE_TIME: ${REFRESH_COOKIE_EXPIRE_TIME:-604800000}
+      SESSION_SECRET_KEY: ${SESSION_SECRET_KEY:-binhle@123-SESSION}
+      CSRF_TOKEN_HEADER: ${CSRF_TOKEN_HEADER:-__Host-blank.X-CSRF-Token}
     ports:
       - '${APP_PORT:-8888}:${PORT:-8888}' # expose-to-the-world : only-in-the-docker
     depends_on:
