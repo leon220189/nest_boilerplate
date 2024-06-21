@@ -9,7 +9,7 @@ const config: TypeOrmModuleOptions = {
 	database: process.env.DATABASE_NAME || 'leonle_dev_db',
 	entities: ['dist/**/*.entity.{ts,js}'],
 	migrations: ['dist/migrations/*.{ts,js}', 'src/migrations/*.{ts,js}'],
-	synchronize: true, // Disable automatic schema synchronization
+	synchronize: false, // Disable automatic schema synchronization
 	migrationsRun: true,
 	logging: false,
 	migrationsTableName: 'migrations',
