@@ -36,6 +36,7 @@ jobs:
           tags: ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
 
   deploy:
+    deploy:
     needs: build-and-test
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/master'
@@ -48,31 +49,23 @@ jobs:
           wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
           unzip ngrok-stable-linux-amd64.zip
 
-      - name: Create env file
-        run: |
-          cat << EOF > .env
-          APP_PORT=8888
-          PORT=8888
-          EOF
-
       - name: Start Docker and Run App
         run: |
           chmod +x ./dev.sh
-          ./dev.sh up docker-compose.prod.yml
+          ./dev.sh up docker-compose.local.yml
           sleep 10  # Wait for containers to fully start
           docker ps
 
       - name: Expose with ngrok
         run: |
+          ./ngrok authtoken ${{ secrets.NGROK_AUTHTOKEN }} # Use authtoken from GitHub secrets
           CONTAINER_ID=$(docker ps -qf "name=test-server")
           if [ -z "$CONTAINER_ID" ]; then
             echo "Container not found, exiting..."
             exit 1
           fi
           PORT_MAPPING=$(docker port $CONTAINER_ID)
-          echo "Port Mapping: $PORT_MAPPING"
-          PORT=$(echo $PORT_MAPPING | awk -F: '{print $NF}')
-          echo "Port extracted: $PORT"
+          PORT=$(echo $PORT_MAPPING | cut -d ':' -f2)
           if [ -z "$PORT" ]; then
             echo "Port not found, exiting..."
             exit 1
