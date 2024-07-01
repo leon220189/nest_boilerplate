@@ -26,7 +26,7 @@ jobs:
 
       - name: Build and test
         run: |
-          docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} -f docker/Dockerfile.dev .
 
       - name: Tag image as latest
         run: |
