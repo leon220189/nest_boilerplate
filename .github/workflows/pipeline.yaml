@@ -3,10 +3,10 @@ name: CI/CD Pipeline testing
 on:
   push:
     branches:
-      - master
+      - feature/k8s-practice # default master
   pull_request:
     branches:
-      - master
+      - feature/k8s-practice # default master
 
 jobs:
   build-and-test:
