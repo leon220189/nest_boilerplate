@@ -28,63 +28,69 @@ jobs:
         run: |
           docker build -t ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} .
 
+      - name: Tag image as latest
+        run: |
+          docker tag ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }} ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:latest
+
       - name: Push image to Docker Hub
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
-
-  deploy:
-    needs: build-and-test
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Install ngrok
         run: |
-          wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
-          unzip ngrok-stable-linux-amd64.zip
+          docker push ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_USERNAME }}/nest_boilerplate:latest
 
-      - name: Create env file
-        run: |
-          echo "APP_PORT=8888" >> .env
-          echo "PORT=8888" >> .env
-          echo "DATABASE_HOST=test-postgres" >> .env
-          echo "DATABASE_PORT=5432" >> .env
-          echo "DATABASE_USERNAME=test" >> .env
-          echo "DATABASE_PASSWORD=test" >> .env
-          echo "DATABASE_NAME=test_db" >> .env
-          echo "JWT_SECRET_KEY=binhle" >> .env
-          echo "ACCESS_TOKEN_EXPIRE_TIME=3600s" >> .env
-          echo "REFRESH_TOKEN_EXPIRE_TIME=86400s" >> .env
-          echo "COOKIE_SECRET_KEY=binhle@123-COOKIE" >> .env
-          echo "ACCESS_COOKIE_EXPIRE_TIME=900000" >> .env
-          echo "REFRESH_COOKIE_EXPIRE_TIME=604800000" >> .env
-          echo "SESSION_SECRET_KEY=binhle@123-SESSION" >> .env
-          echo "CSRF_TOKEN_HEADER=__Host-blank.X-CSRF-Token" >> .env
+  # deploy:
+  #   needs: build-and-test
+  #   runs-on: ubuntu-latest
+  #   if: github.ref == 'refs/heads/master'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v2
 
-      - name: Start Docker and Run App
-        run: |
-          chmod +x ./dev.sh
-          ./dev.sh up docker-compose.local.yml
-          sleep 10  # Wait for containers to fully start
-          docker ps
+  #     - name: Install ngrok
+  #       run: |
+  #         wget https://bin.equinox.io/c/bNyj1mQVY4c/ngrok-stable-linux-amd64.zip
+  #         unzip ngrok-stable-linux-amd64.zip
 
-      - name: Expose with ngrok
-        run: |
-          ./ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
-          CONTAINER_ID=$(docker ps -qf "name=test-server")
-          if [ -z "$CONTAINER_ID" ]; then
-            echo "Container not found, exiting..."
-            exit 1
-          fi
-          PORT_MAPPING=$(docker port $CONTAINER_ID)
-          PORT=$(echo $PORT_MAPPING | awk -F: '{print $NF}')
-          if [ -z "$PORT" ]; then
-            echo "Port not found, exiting..."
-            exit 1
-          fi
-          ./ngrok http $PORT --region=us
+  #     - name: Create env file
+  #       run: |
+  #         echo "APP_PORT=8888" >> .env
+  #         echo "PORT=8888" >> .env
+  #         echo "DATABASE_HOST=test-postgres" >> .env
+  #         echo "DATABASE_PORT=5432" >> .env
+  #         echo "DATABASE_USERNAME=test" >> .env
+  #         echo "DATABASE_PASSWORD=test" >> .env
+  #         echo "DATABASE_NAME=test_db" >> .env
+  #         echo "JWT_SECRET_KEY=binhle" >> .env
+  #         echo "ACCESS_TOKEN_EXPIRE_TIME=3600s" >> .env
+  #         echo "REFRESH_TOKEN_EXPIRE_TIME=86400s" >> .env
+  #         echo "COOKIE_SECRET_KEY=binhle@123-COOKIE" >> .env
+  #         echo "ACCESS_COOKIE_EXPIRE_TIME=900000" >> .env
+  #         echo "REFRESH_COOKIE_EXPIRE_TIME=604800000" >> .env
+  #         echo "SESSION_SECRET_KEY=binhle@123-SESSION" >> .env
+  #         echo "CSRF_TOKEN_HEADER=__Host-blank.X-CSRF-Token" >> .env
+
+  #     - name: Start Docker and Run App
+  #       run: |
+  #         chmod +x ./dev.sh
+  #         ./dev.sh up docker-compose.local.yml
+  #         sleep 30  # Wait for containers to fully start
+  #         docker ps
+
+  #     - name: Check Docker Logs
+  #       run: |
+  #         docker logs test-server
+
+  #     - name: Expose with ngrok
+  #       run: |
+  #         ./ngrok authtoken ${{ secrets.NGROK_AUTH_TOKEN }}
+  #         CONTAINER_ID=$(docker ps -qf "name=test-server")
+  #         if [ -z "$CONTAINER_ID" ]; then
+  #           echo "Container not found, exiting..."
+  #           exit 1
+  #         fi
+  #         PORT_MAPPING=$(docker port $CONTAINER_ID)
+  #         PORT=$(echo $PORT_MAPPING | awk -F: '{print $NF}')
+  #         if [ -z "$PORT" ]; then
+  #           echo "Port not found, exiting..."
+  #           exit 1
+  #         fi
+  #         ./ngrok http $PORT --region=us

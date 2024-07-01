@@ -1,5 +1,5 @@
 {
-	"name": "leonle-project",
+	"name": "leon-app-example",
 	"version": "0.0.1",
 	"description": "",
 	"author": "",
@@ -31,7 +31,9 @@
 		"typeorm:cache:clear": "ts-node -r tsconfig-paths/register src/cli.ts typeorm cache:clear",
 		"typeorm:query": "ts-node -r tsconfig-paths/register src/cli.ts typeorm query",
 		"typeorm:version": "ts-node -r tsconfig-paths/register src/cli.ts typeorm version",
-		"migration:prod:run": "ts-node -r tsconfig-paths/register dist/src/cli.js typeorm migration:run"
+		"migration:prod:run": "ts-node -r tsconfig-paths/register dist/src/cli.js typeorm migration:run",
+		"dc:up": "docker compose --env-file .env -f docker/docker-compose.local.yml -p leon-app-example up",
+		"dc:down": "docker compose --env-file .env -f docker/docker-compose.local.yml -p leon-app-example down"
 	},
 	"dependencies": {
 		"@nestjs-modules/mailer": "^2.0.2",

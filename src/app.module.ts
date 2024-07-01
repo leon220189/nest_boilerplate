@@ -15,7 +15,7 @@ import { ConstModule } from '../libs/const/const.module';
 import { UtilsModule } from '../libs/utils/util.module';
 import { MailModule } from './modules/v1/mail/mail.module';
 
-import getOrmConfig from '../orm/ormconfig';
+import getOrmConfig from '../config/orm/ormconfig';
 
 @Module({
 	imports: [
