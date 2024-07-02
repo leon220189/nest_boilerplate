@@ -5,9 +5,11 @@ metadata:
   labels:
     app: backend
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: backend
   ports:
-    - port: 3000
-      targetPort: 3000
+    - name: http
+      port: 3000
+      targetPort: backend-port
+      protocol: TCP

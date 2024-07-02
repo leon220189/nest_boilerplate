@@ -16,27 +16,27 @@ spec:
       labels:
         app: backend
     spec:
-      restartPolicy: Always
       containers:
         - image: lebinh89/nest_boilerplate:latest
           name: leon-app-example-backend
           imagePullPolicy: Always
           ports:
-            - containerPort: 3000
+            - containerPort: 8888
+              name: backend-port
           env:
-            - name: REDIS_HOST
-              value: 'leon-redis'
-            - name: REDIS_PORT
-              value: '6379'
-            - name: DB_HOST
-              value: 'leon-postgres'
-            - name: DB_PORT
+            - name: DATABASE_HOST
+              value: postgres-service
+            - name: DATABASE_PORT
               value: '5432'
-            - name: DB_USERNAME
-              value: 'test'
-            - name: DB_PASSWORD
-              value: 'test'
-            - name: DB_NAME
-              value: 'test_db'
+            - name: DATABASE_USERNAME
+              value: test
+            - name: DATABASE_PASSWORD
+              value: test
+            - name: DATABASE_NAME
+              value: test_db
             - name: DB_TIMEZONE
-              value: 'UTC'
+              value: UTC
+          envFrom:
+            - configMapRef:
+                name: backend-env-config
+      restartPolicy: Always

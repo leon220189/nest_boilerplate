@@ -12,6 +12,9 @@ import {
 import { plainToClass } from 'class-transformer';
 import { Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { ApiTags } from '@nestjs/swagger';
+import { ApiLogin } from './swagger/login/login.decorator';
+import { ApiVerifyOtp } from './swagger/verify-otp/otp.decorator';
 
 // Guard
 import {
@@ -39,6 +42,7 @@ import { CreateUserDto } from '../user/dto/create-user.dto';
 import { HttpErrors } from './../../../../libs/const/httpMessages.const';
 
 @Controller('auth')
+@ApiTags('auth')
 export class AuthController {
 	constructor(
 		private readonly jwtAuthService: JWTAuthService,
@@ -70,6 +74,7 @@ export class AuthController {
 	@UseGuards(LocalAuthGuard)
 	@Post('/login')
 	@HttpCode(HttpStatus.OK)
+	@ApiLogin()
 	async login(
 		@Req() req: Request | any,
 		@Res({ passthrough: true }) res: Response,
@@ -97,6 +102,7 @@ export class AuthController {
 	@UseGuards(CsrfGuard)
 	@Post('/otp')
 	@HttpCode(HttpStatus.OK)
+	@ApiVerifyOtp()
 	async verifyOTP(
 		@Body() payload: any,
 		@Res({ passthrough: true }) res: Response,
@@ -109,8 +115,6 @@ export class AuthController {
 			});
 			return auth;
 		} catch (err) {
-			console.log('🚀 ~ AuthController ~ err:', err);
-
 			throw this.httpErrors.getErrorResponse('Generic');
 		}
 	}

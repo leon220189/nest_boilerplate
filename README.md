@@ -126,3 +126,12 @@ For full visibility:
 - Error handling is simplified and errors simply uncaught.
 
 ### TYPEORM config end
+
+### K8S setup local
+
+- Install minikube
+- Start minikube `minikube start`
+- Apply deployment `kubectl apply -f k8s`
+- Expose to internet using tunnel `minikube tunnel`
+- Testing `curl http://localhost:3000`
+- Delete minikube `minikube delete`

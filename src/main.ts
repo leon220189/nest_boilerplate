@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 import bodyParser from 'body-parser';
 import cookieParser from 'cookie-parser';
@@ -48,6 +49,16 @@ async function bootstrap() {
 			saveUninitialized: false,
 		}),
 	);
+
+	// documentation
+	const configDocument = new DocumentBuilder()
+		.setTitle('nestjs example')
+		.setDescription('API description')
+		.setVersion('1.0')
+		.addTag('leonle')
+		.build();
+	const document = SwaggerModule.createDocument(app, configDocument);
+	SwaggerModule.setup('docs', app, document);
 
 	await app.listen(PORT, () =>
 		console.log(`Application running on port ${PORT}`),
