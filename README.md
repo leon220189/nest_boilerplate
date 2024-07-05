@@ -131,7 +131,10 @@ For full visibility:
 
 - Install minikube
 - Start minikube `minikube start`
-- Apply deployment `kubectl apply -f k8s`
+- Add local-path-provisioner `kubectl apply -f kubernetes/_local-path-provisioner.yaml`
+- Create nestjs-kubernetes-namespace `kubectl apply -f kubernetes/01-namespaces.yaml`
+- Create nestjs-kubernetes-volume `kubectl apply -f kubernetes/02-volumes.yaml`
+- Start other deoloyment `skaffold dev --port-forward`
 - Expose to internet using tunnel `minikube tunnel`
 - Testing `curl http://localhost:3000`
 - Delete minikube `minikube delete`

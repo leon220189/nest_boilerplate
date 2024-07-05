@@ -1,0 +1,60 @@
+# postgres-service.yaml
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: nestjs-kubernetes-namespace
+  name: postgres-service
+  labels:
+    app: postgres
+spec:
+  clusterIP: None
+  selector:
+    app: postgres
+  ports:
+    - port: 5432
+      targetPort: 5432
+
+# postgres-deployment.yaml
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: nestjs-kubernetes-namespace
+  name: postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: postgres
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:16.2-alpine
+          env:
+            - name: PG_DATA
+              value: /var/lib/postgresql/pgdata
+            - name: POSTGRES_DB
+              value: test_db
+            - name: POSTGRES_PASSWORD
+              value: test
+            - name: POSTGRES_USER
+              value: test
+            - name: TZ
+              value: UTC
+          ports:
+            - containerPort: 5432
+          volumeMounts:
+            - name: nestjs-kubernetes-volume
+              mountPath: /var/lib/postgresql/data
+              subPath: postgres-16.x.x-var-lib-postgresql-data
+      volumes:
+        - name: nestjs-kubernetes-volume
+          persistentVolumeClaim:
+            claimName: nestjs-kubernetes-volume
