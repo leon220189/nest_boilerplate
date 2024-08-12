@@ -4,6 +4,8 @@ import { ConfigModule } from '@nestjs/config';
 import { NestTypeOrmCommandsModule } from 'nestjs-typeorm-commands';
 
 import { AppService } from './app.service';
+import { AppController } from './app.controller';
+
 import { configuration } from '../config/configuration';
 
 // Module imports
@@ -43,7 +45,7 @@ import getOrmConfig from '../config/orm/ormconfig';
 		MailModule,
 		RolesModule,
 	],
-	controllers: [],
+	controllers: [AppController],
 	providers: [AppService],
 })
 export class AppModule {}

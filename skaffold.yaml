@@ -1,24 +1,27 @@
-apiVersion: skaffold/v1
+apiVersion: skaffold/v4beta11
 kind: Config
-metadata:
-  name: dev-nestjs-kubernetes
 build:
+  tagPolicy:
+    envTemplate:
+      template: "{{.IMAGE_NAME}}:{{.DIGEST}}"
   artifacts:
-    - image: lebinh89/nest_boilerplate
+    - image: backend-skaffold-helm
       context: .
       docker:
-        dockerfile: ./docker/Dockerfile.dev
-      sync:
-        manual:
-          - src: 'src/**/*.*'
-            dest: .
+        dockerfile: docker/Dockerfile
+
 deploy:
-  kubectl:
-    flags:
-      global: [--namespace=nestjs-kubernetes-namespace]
-    manifests:
-      - ./kubernetes/03-secrets.yaml
-      - ./kubernetes/04-postgres.yaml
-      - ./kubernetes/05-redis.yaml
-      - ./kubernetes/06-data.yaml
-      - ./kubernetes/07-nestjs.yaml
+  helm:
+    releases:
+      - name: backend
+        chartPath: charts/backend
+        setValues:
+          image: backend-skaffold-helm
+        valuesFiles:
+          - charts/backend/values.yaml
+      - name: postgres
+        chartPath: charts/postgres
+        setValues:
+          postgres.image: postgres:16.2-alpine
+        valuesFiles:
+          - charts/postgres/values.yaml
