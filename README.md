@@ -131,6 +131,7 @@ For full visibility:
 
 - Install minikube
 - Start minikube `minikube start`
+- Add minikube ingress `minikube addons enable ingress`
 - Start other deoloyment `skaffold dev`
 - Expose to internet using tunnel `minikube tunnel`
 - Testing `curl http://localhost/v1`

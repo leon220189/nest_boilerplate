@@ -14,14 +14,14 @@ deploy:
   helm:
     releases:
       - name: backend
-        chartPath: charts/backend
+        chartPath: helm-charts/backend
         setValues:
           image: backend-skaffold-helm
         valuesFiles:
-          - charts/backend/values.yaml
+          - helm-charts/backend/values.yaml
       - name: postgres
-        chartPath: charts/postgres
+        chartPath: helm-charts/postgres
         setValues:
           postgres.image: postgres:16.2-alpine
         valuesFiles:
-          - charts/postgres/values.yaml
+          - helm-charts/postgres/values.yaml
