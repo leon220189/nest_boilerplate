@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "backend.name" . }}
+  labels:
+    app: {{ template "backend.name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ template "backend.name" . }}
+      release: {{ .Release.Name }}
+  replicas: {{ .Values.global.backend.replicaCount }}
+  template:
+    metadata:
+      labels:
+        app: {{ template "backend.name" . }}
+        release: {{ .Release.Name }}
+    spec:
+      volumes:
+        - name: static-assets
+          configMap:
+            name: {{ template "backend.name" . }}
+            defaultMode: {{ .Values.global.backend.defaultMode }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: {{ .Values.global.backend.image }}
+          env:
+          {{- range $key, $value := .Values.global.backend.env }}
+          - name: {{ $key }}
+            value: {{ $value | quote }}
+          {{- end }}
+          imagePullPolicy: {{ .Values.global.backend.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.global.backend.containerPort }}
+          volumeMounts:
+            - mountPath: /usr/share/nginx/html/
+              name: static-assets
+          resources:
+{{ toYaml .Values.resources | indent 12 }}
+    {{- if .Values.nodeSelector }}
+      nodeSelector:
+{{ toYaml .Values.nodeSelector | indent 8 }}
+    {{- end }}

@@ -50,4 +50,4 @@ backend:
 ###################
 ingress:
   enabled: true
-  host: backend.local
+  host: localhost
