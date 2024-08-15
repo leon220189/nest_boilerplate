@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: {{ template "backend.name" . }}
       release: {{ .Release.Name }}
-  replicas: {{ .Values.global.backend.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -23,18 +23,18 @@ spec:
         - name: static-assets
           configMap:
             name: {{ template "backend.name" . }}
-            defaultMode: {{ .Values.global.backend.defaultMode }}
+            defaultMode: {{ .Values.defaultMode }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.global.backend.image }}
+          image: {{ .Values.image }}
           env:
-          {{- range $key, $value := .Values.global.backend.env }}
+          {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
-          imagePullPolicy: {{ .Values.global.backend.pullPolicy }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.global.backend.containerPort }}
+            - containerPort: {{ .Values.containerPort }}
           volumeMounts:
             - mountPath: /usr/share/nginx/html/
               name: static-assets

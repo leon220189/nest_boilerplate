@@ -8,12 +8,12 @@ metadata:
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.global.postgres.serviceType }}
+  type: {{ .Values.serviceType }}
   ports:
-    - port: {{ .Values.global.postgres.serviceExternalPort }}
-      targetPort: {{ .Values.global.postgres.serviceInternalPort }}
+    - port: {{ .Values.serviceExternalPort }}
+      targetPort: {{ .Values.serviceInternalPort }}
       protocol: TCP
-      name: {{ .Values.global.postgres.serviceName }}
+      name: {{ .Values.serviceName }}
   selector:
     app: {{ template "postgres.name" . }}
     release: {{ .Release.Name }}

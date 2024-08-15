@@ -1,19 +1,19 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: {{ .Values.global.backend.serviceName }}
+  name: {{ .Values.serviceName }}
   labels:
     app: {{ template "backend.name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version | replace "+" "_" }}
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
 spec:
-  type: {{ .Values.global.backend.serviceType }}
+  type: {{ .Values.serviceType }}
   ports:
-    - port: {{ .Values.global.backend.serviceExternalPort }}
-      targetPort: {{ .Values.global.backend.serviceInternalPort }}
+    - port: {{ .Values.serviceExternalPort }}
+      targetPort: {{ .Values.serviceInternalPort }}
       protocol: TCP
-      name: {{ .Values.global.backend.serviceName }}
+      name: {{ .Values.serviceName }}
   selector:
     app: {{ template "backend.name" . }}
     release: {{ .Release.Name }}

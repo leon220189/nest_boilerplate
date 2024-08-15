@@ -12,7 +12,7 @@ spec:
     matchLabels:
       app: {{ template "postgres.name" . }}
       release: {{ .Release.Name }}
-  replicas: {{ .Values.global.postgres.replicaCount }}
+  replicas: {{ .Values.replicaCount }}
   template:
     metadata:
       labels:
@@ -23,18 +23,18 @@ spec:
         - name: static-assets
           configMap:
             name: {{ template "postgres.name" . }}
-            defaultMode: {{ .Values.global.postgres.defaultMode }}
+            defaultMode: {{ .Values.defaultMode }}
       containers:
         - name: {{ .Chart.Name }}
-          image: {{ .Values.global.postgres.image }}
+          image: {{ .Values.image }}
           env:
-          {{- range $key, $value := .Values.global.postgres.env }}
+          {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
             value: {{ $value | quote }}
           {{- end }}
-          imagePullPolicy: {{ .Values.global.postgres.pullPolicy }}
+          imagePullPolicy: {{ .Values.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.global.postgres.containerPort }}
+            - containerPort: {{ .Values.containerPort }}
           volumeMounts:
             - mountPath: /usr/share/nginx/html/
               name: static-assets
