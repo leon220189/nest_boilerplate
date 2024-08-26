@@ -1,5 +1,0 @@
-dependencies:
-  - name: backend
-    condition: global.backend.enabled
-  - name: postgres
-    condition: global.postgres.enabled

@@ -4,15 +4,15 @@ build:
   tagPolicy:
     envTemplate:
       template: "{{.IMAGE_NAME}}:{{.DIGEST}}"
-  artifacts:
-    - image: backend
-      context: .
-      docker:
-        dockerfile: docker/Dockerfile
+  # artifacts:
+  #   - image: nest-backend
+  #     context: .
+  #     docker:
+  #       dockerfile: docker/Dockerfile
 
 deploy:
   helm:
     releases:
-      - name: nest-boilerplate-helm
-        chartPath: nest-boilerplate-helm
+      - name: nest-helm-dependencies
+        chartPath: nest-helm-dependencies
         skipBuildDependencies: true # Skip helm dep build
