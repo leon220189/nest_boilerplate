@@ -215,6 +215,3 @@ nest-backend:
     GOOGLE_APP_ID: xxxxxxx
     GOOGLE_APP_SECRET: xxxxxxx
     GOOGLE_APP_REDIRECT_URL: xxxxxxx
-    # helm config
-    PORT_HELM: 3000
-    TARGET_PORT_HELM: 8888
