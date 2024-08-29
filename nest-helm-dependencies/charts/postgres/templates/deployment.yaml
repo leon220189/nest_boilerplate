@@ -39,7 +39,10 @@ spec:
           env:
           {{- range $key, $value := .Values.env }}
           - name: {{ $key }}
-            value: {{ $value | quote }}
+            valueFrom:
+              secretKeyRef:
+                name: {{ $.Values.serviceName }}-serect
+                key: {{ $key }}
           {{- end }}
           ports:
             - name: http

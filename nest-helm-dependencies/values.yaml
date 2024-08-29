@@ -120,10 +120,10 @@ postgres:
     replicaCount: 1
 
   env:
-    POSTGRES_DB: test_db
-    POSTGRES_PASSWORD: test
-    POSTGRES_USER: test
-    TZ: UTC
+    POSTGRES_DB: POSTGRES_DB
+    POSTGRES_USER: POSTGRES_USER
+    POSTGRES_PASSWORD: POSTGRES_PASSWORD
+    TZ: TZ
   livenessProbe:
     tcpSocket:
       port: 5432
