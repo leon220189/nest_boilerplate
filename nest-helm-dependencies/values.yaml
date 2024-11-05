@@ -215,3 +215,101 @@ nest-backend:
     GOOGLE_APP_ID: xxxxxxx
     GOOGLE_APP_SECRET: xxxxxxx
     GOOGLE_APP_REDIRECT_URL: xxxxxxx
+
+# Configuration for Prometheus
+prometheus:
+  enabled: true
+  alertmanager:
+    service:
+      ports:
+        http: 3003  # Port for Alertmanager
+  server:
+    service:
+      type: LoadBalancer
+      ports:
+        http: 3002  # Port for Prometheus server
+    resources:
+      limits:
+        cpu: 500m
+        memory: 1024Mi
+      requests:
+        cpu: 250m
+        memory: 512Mi
+
+    extraScrapeConfigs:
+      - job_name: 'node-exporter'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['nest-helm-dependencies-node-exporter.default.svc.cluster.local:9100']
+
+      - job_name: 'kube-state-metrics'
+        metrics_path: /metrics
+        static_configs:
+          - targets: ['nest-helm-dependencies-kube-state-metrics.default.svc.cluster.local:8080']
+
+
+# Configuration for Grafana
+grafana:
+  enabled: true
+  service:
+    type: LoadBalancer
+    ports:
+      grafana: 3001  # Desired external port
+  admin:
+    user: "admincc"
+    password: "admin123"
+  persistence:
+    enabled: true
+    storageClass: "metrics-storage"
+    size: "10Gi"
+  resources:
+    limits:
+      cpu: "300m"
+      memory: "512Mi"
+    requests:
+      cpu: "200m"
+      memory: "256Mi"
+
+node-exporter:
+  enabled: true
+
+kube-state-metrics:
+  enabled: true
+
+# StorageClass
+storageClass:
+  name: "metrics-storage"
+  provisioner: "k8s.io/minikube-hostpath"
+  reclaimPolicy: "Retain"
+  allowVolumeExpansion: true
+  volumeBindingMode: "WaitForFirstConsumer"
+
+# Locust
+locust:
+  enabled: true
+  service:
+    type: LoadBalancer
+  # Master node configuration
+  master:
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+  # Worker nodes configuration
+  worker:
+    replicas: 1  # Scales the number of workers to simulate more load
+    resources:
+      requests:
+        cpu: "100m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+  # Load test configuration
+  loadtest:
+    locust_locustfile: "locustfile.py"  # The main test entry point
+    locust_locustfile_path: "/mnt/locust"  # Path where the files will be mounted
+    locust_locustfile_configmap: "locust-test-files"  # ConfigMap name
